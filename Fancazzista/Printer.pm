@@ -159,9 +159,10 @@ sub display {
             my $text   = $_->{text};
             my $isRead = $self->isInHistories($link);
 
+            $text =~ s/^\s+|\s+$//g;
+
             if ( !$isRead ) {
-                $output .= sprintf "  - %.*s", ( $wchar - $SIZE - 3 ),
-                  $_->{text};
+                $output .= sprintf "  - %.*s", ( $wchar - $SIZE - 3 ), $text;
                 $output .= "\n";
             }
         }
