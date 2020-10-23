@@ -2,12 +2,6 @@
 
 My perl command line tool for technology news website scrapping.
 
-For now I will get news from : 
-
-- korben.info
-- presse-citron.fr
-- jster
-
 ## Install tools
 
 First you need to install [carton](https://metacpan.org/pod/Carton) : 
@@ -27,6 +21,10 @@ Install dependencies :
 To run project : 
 
     carton exec -- perl index.pl --config=scrap.json
+
+It's better with less : 
+
+    carton exec -- perl index.pl --config=scrap.json | less
 
 To build project : 
 
