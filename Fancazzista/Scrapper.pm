@@ -11,7 +11,7 @@ use Encode qw(encode);
 sub new {
     my $class = shift;
 
-    my $self = { 'url' => shift, };
+    my $self = { };
 
     bless $self, $class;
 

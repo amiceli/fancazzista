@@ -12,30 +12,34 @@ state $SIZE = 20;
 sub new {
     my $class = shift;
 
-    my $self = { websites => $_[0], histories => $_[1], };
+    my $self = { 
+        websites => $_[0], 
+        reddits => $_[1], 
+        histories => $_[2], 
+    };
 
     bless $self, $class;
 
     return $self;
 }
 
-sub setWebsites {
-    my $self     = shift;
-    my @websites = @{ $_[0] };
+# sub setWebsites {
+#     my $self     = shift;
+#     my @websites = @{ $_[0] };
 
-    $self->{websites} = @websites;
+#     $self->{websites} = @websites;
 
-    return $self;
-}
+#     return $self;
+# }
 
-sub setHistories {
-    my $self      = shift;
-    my @histories = shift;
+# sub setHistories {
+#     my $self      = shift;
+#     my @histories = shift;
 
-    $self->{histories} = @histories;
+#     $self->{histories} = @histories;
 
-    return $self;
-}
+#     return $self;
+# }
 
 sub printPadding {
     my $self = shift;
@@ -130,11 +134,14 @@ sub display {
     my ( $wchar, $hchar, $wpixels, $hpixels ) = GetTerminalSize();
 
     my @websites  = @{ $self->{websites} };
+    my @reddits  = @{ $self->{reddits} };
     my @histories = @{ $self->{histories} };
 
     my $output = '';
 
-    foreach (@websites) {
+    my @list = (@websites, @reddits);
+
+    foreach (@list) {
         my $count = ( $wchar - $SIZE - length( $_->{name} ) - 1 );
         $output .= $self->printLine();
 
