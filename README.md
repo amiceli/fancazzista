@@ -38,6 +38,16 @@ Example :
 
 ~~~json
 {
+    "subreddits" : [
+        {
+            "name" : "javascript",
+            "limit" : 5
+        },
+        {
+            "name" : "php",
+            "limit" : 5
+        }
+    ],
     "websites" : [
         {
             "name" : "Korben",
