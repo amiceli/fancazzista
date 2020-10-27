@@ -5,9 +5,6 @@ use warnings;
 use Term::ANSIColor;
 use Data::Dumper;
 use Term::ReadKey;
-use feature 'state';
-
-state $SIZE = 20;
 
 sub new {
     my $class = shift;
@@ -16,6 +13,7 @@ sub new {
         websites => $_[0], 
         reddits => $_[1], 
         histories => $_[2], 
+        withMarkdown => 0,
     };
 
     bless $self, $class;
@@ -23,52 +21,13 @@ sub new {
     return $self;
 }
 
-# sub setWebsites {
-#     my $self     = shift;
-#     my @websites = @{ $_[0] };
-
-#     $self->{websites} = @websites;
-
-#     return $self;
-# }
-
-# sub setHistories {
-#     my $self      = shift;
-#     my @histories = shift;
-
-#     $self->{histories} = @histories;
-
-#     return $self;
-# }
-
-sub printPadding {
+sub setWithMarkdown {
     my $self = shift;
-    my ( $wchar, $hchar, $wpixels, $hpixels ) = GetTerminalSize();
-    my $padding = ( $wchar - ( $wchar - $SIZE ) ) / 2;
-    my $line    = "";
+    my $withMarkdown = shift;
 
-    for ( $a = 0 ; $a < $padding ; $a = $a + 1 ) {
-        $line .= " ";
-    }
+    $self->{withMarkdown} = $withMarkdown;
 
-    return $line;
-}
-
-sub printLine {
-    my $self = shift;
-    my ( $wchar, $hchar, $wpixels, $hpixels ) = GetTerminalSize();
-
-    my $line = $self->printPadding();
-
-    $line .= "┌";
-    for ( $a = 0 ; $a < $wchar - $SIZE ; $a = $a + 1 ) {
-        $line .= "─";
-    }
-    $line .= "┐";
-
-    $line .= "\n";
-
-    return $line;
+    return $self;
 }
 
 sub printSub {
@@ -80,40 +39,6 @@ sub printSub {
         $line .= "-";
     }
 
-    $line .= "\n";
-
-    return $line;
-}
-
-sub printEndLine {
-    my $self = shift;
-    my ( $wchar, $hchar, $wpixels, $hpixels ) = GetTerminalSize();
-
-    my $line = $self->printPadding();
-
-    $line .= "└";
-    for ( $a = 0 ; $a < $wchar - $SIZE ; $a = $a + 1 ) {
-        $line .= "─";
-    }
-    $line .= "┘";
-
-    $line .= "\n";
-
-    return $line;
-}
-
-sub printBorder {
-    my $self    = shift;
-    my $minimal = shift;
-    my ( $wchar, $hchar, $wpixels, $hpixels ) = GetTerminalSize();
-
-    my $line = $self->printPadding();
-
-    $line .= "│";
-    for ( $a = 0 ; $a < $wchar - $SIZE ; $a = $a + 1 ) {
-        $line .= " ";
-    }
-    $line .= "│";
     $line .= "\n";
 
     return $line;
@@ -131,7 +56,7 @@ sub isInHistories {
 
 sub display {
     my ($self) = @_;
-    my ( $wchar, $hchar, $wpixels, $hpixels ) = GetTerminalSize();
+    my ( $wchar ) = GetTerminalSize();
 
     my @websites  = @{ $self->{websites} };
     my @reddits  = @{ $self->{reddits} };
@@ -142,39 +67,46 @@ sub display {
     my @list = (@websites, @reddits);
 
     foreach (@list) {
-        my $count = ( $wchar - $SIZE - length( $_->{name} ) - 1 );
-        $output .= $self->printLine();
-
-        $output .= $self->printPadding();
-        $output .= "│ ";
-        $output .= $_->{name};
-
-        for ( my $i = 0 ; $i < $count ; $i++ ) {
-            $output .= ' ';
-        }
-        $output .= "│";
-        $output .= "\n";
-
-        $output .= $self->printEndLine();
-
-        $output .= "\n";
+        my $showSection = 0;
 
         foreach ( @{ $_->{articles} } ) {
-            $output .= $self->printPadding();
+            my $isRead = $self->isInHistories($_->{link});
 
-            my $link   = $_->{link};
-            my $text   = $_->{text};
-            my $isRead = $self->isInHistories($link);
-
-            $text =~ s/^\s+|\s+$//g;
-
-            if ( !$isRead ) {
-                $output .= sprintf "  - %.*s", ( $wchar - $SIZE - 3 ), $text;
-                $output .= "\n";
-            }
+            if (!$isRead) { $showSection += 1;}
         }
 
-        $output .= "\n";
+        if ($showSection >= 1) {
+            if ($self->{withMarkdown} && defined $_->{url}) {
+                $output .= sprintf "[%s](%s)", $_->{name}, $_->{url};
+            } else {
+                $output .= $_->{name};
+            }
+
+            $output .= "\n";
+            $output .= "\n";
+
+            foreach ( @{ $_->{articles} } ) {
+                my $link   = $_->{link};
+                my $text   = $_->{text};
+                my $isRead = $self->isInHistories($link);
+
+                $text =~ s/^\s+|\s+$//g;
+
+                if ( !$isRead ) {
+                    my $cutText = sprintf "%.*s", $wchar - 10, $text;
+
+                    if ($self->{withMarkdown}) {
+                        $output .= sprintf(" - [%s](%s)", $cutText, $_->{link});
+                    } else {
+                        $output .= $cutText;
+                    }
+
+                    $output .= "\n";
+                }
+            }
+
+            $output .= "\n";
+        }
     }
 
     return $output;

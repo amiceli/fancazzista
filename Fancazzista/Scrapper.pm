@@ -26,10 +26,10 @@ sub scrap {
 
     foreach ( @{ $config->{websites} } ) {
         my @resourceArticles = $self->extractArticles($_);
-        my $name = $_->{name};
 
         push @websites, {
-            name => $name,
+            name => $_->{name},
+            url => $_->{url},
             articles => \@resourceArticles
         };
     }

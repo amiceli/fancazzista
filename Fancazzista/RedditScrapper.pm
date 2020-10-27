@@ -26,10 +26,10 @@ sub scrap {
 
     foreach ( @{ $config->{subreddits} } ) {
         my @posts = $self->getPosts($_);
-        my $name = $_->{name};
 
         push @subreddits, {
-            name => $name,
+            name => $_->{name},
+            url => "https://www.reddit.com/r/" . $_->{name},
             articles => \@posts
         };
     }

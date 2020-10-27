@@ -10,8 +10,12 @@ use Getopt::Long;
 use Fancazzista::Printer;
 
 my $configFilePath;
+my $markDownOutput = 0;
 
-GetOptions( 'config=s' => \$configFilePath, );
+GetOptions(
+    'config=s' => \$configFilePath, 
+    'markdown' => \$markDownOutput, 
+);
 
 if ( not defined $configFilePath ) {
     die "Config file path is required";
@@ -29,7 +33,7 @@ my @reddits  = $redditScrapper->scrap($config);
 
 my $printer = new Printer( \@websites, \@reddits, \@histories );
 
-my $output = $printer->display();
+my $output = $printer->setWithMarkdown($markDownOutput)->display();
 
 print $output;
 
