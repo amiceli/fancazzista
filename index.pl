@@ -3,6 +3,7 @@
 use utf8;
 use strict;
 use warnings;
+use lib './Fancazzista';
 use Fancazzista::Scrapper;
 use Fancazzista::RedditScrapper;
 use Fancazzista::ConfigParser;
