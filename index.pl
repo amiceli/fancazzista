@@ -4,11 +4,11 @@ use utf8;
 use strict;
 use warnings;
 use lib './lib/';
-use Fancazzista::Scrapper;
-use Fancazzista::RedditScrapper;
-use Fancazzista::ConfigParser;
+use Scrapper;
+use RedditScrapper;
+use ConfigParser;
 use Getopt::Long;
-use Fancazzista::Printer;
+use Printer;
 
 my $configFilePath;
 my $markDownOutput = 0;
