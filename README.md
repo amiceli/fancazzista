@@ -72,3 +72,9 @@ Example :
 }
 ~~~
 
+## How I use it
+
+I created a CRON every morning, using fancazzista to generate a markdown file.
+I tranform [markdown to HTML](https://github.com/mixu/markdown-styles) and serve it with nginx.
+
+Fresh news every day !!
