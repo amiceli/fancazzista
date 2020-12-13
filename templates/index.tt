@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fancazzista</title>
+    <link href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon-variables.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <h1>
+        fancazzista
+    </h1>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8">
+                [% FOREACH website IN websites %]
+                    <h2>
+                        [% website.name %]
+                    </h2>
+                    <br>
+                    <ul>
+                        [% FOREACH article IN website.articles %]
+                        <li>
+                            <a href="[% article.link %]">
+                                [% article.text %]
+                            </a>
+                        </li>
+                        [% END %]
+                    </ul>
+                [% END %]
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/js/halfmoon.min.js"></script>
+    <script>
+        (() => {
+            halfmoon.toggleDarkMode()
+        })();
+    </script>
+</body>
+</html>

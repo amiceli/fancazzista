@@ -12,10 +12,12 @@ use Printer;
 
 my $configFilePath;
 my $markDownOutput = 0;
+my $htmlOutput = 0;
 
 GetOptions(
     'config=s' => \$configFilePath, 
     'markdown' => \$markDownOutput, 
+    'html' => \$htmlOutput, 
 );
 
 if ( not defined $configFilePath ) {
@@ -34,7 +36,7 @@ my @reddits  = $redditScrapper->scrap($config);
 
 my $printer = new Printer( \@websites, \@reddits, \@histories );
 
-my $output = $printer->setWithMarkdown($markDownOutput)->display();
+my $output = $printer->withMarkdown($markDownOutput)->withHtml($htmlOutput)->display();
 
 print $output;
 

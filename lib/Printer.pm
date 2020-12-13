@@ -5,15 +5,17 @@ use warnings;
 use Term::ANSIColor;
 use Data::Dumper;
 use Term::ReadKey;
+use Template;
 
 sub new {
     my $class = shift;
 
-    my $self = { 
-        websites => $_[0], 
-        reddits => $_[1], 
-        histories => $_[2], 
+    my $self = {
+        websites     => $_[0],
+        reddits      => $_[1],
+        histories    => $_[2],
         withMarkdown => 0,
+        withHtml     => 0,
     };
 
     bless $self, $class;
@@ -21,11 +23,20 @@ sub new {
     return $self;
 }
 
-sub setWithMarkdown {
-    my $self = shift;
+sub withMarkdown {
+    my $self         = shift;
     my $withMarkdown = shift;
 
     $self->{withMarkdown} = $withMarkdown;
+
+    return $self;
+}
+
+sub withHtml {
+    my $self     = shift;
+    my $withHtml = shift;
+
+    $self->{withHtml} = $withHtml;
 
     return $self;
 }
@@ -55,28 +66,34 @@ sub isInHistories {
 }
 
 sub display {
-    my ($self) = @_;
-    my ( $wchar ) = GetTerminalSize();
+    my ($self)  = @_;
+    my ($wchar) = GetTerminalSize();
 
     my @websites  = @{ $self->{websites} };
-    my @reddits  = @{ $self->{reddits} };
+    my @reddits   = @{ $self->{reddits} };
     my @histories = @{ $self->{histories} };
 
-    my $output = '';
+    my @list = ( @websites, @reddits );
 
-    my @list = (@websites, @reddits);
+    for my $website (@list) {
+        my @articles = @{ $website->{articles} };
+        @articles = grep { !$self->isInHistories( $_->{link} ) } @articles;
 
-    foreach (@list) {
-        my $showSection = 0;
+        $website->{articles} = \@articles;
+    }
 
-        foreach ( @{ $_->{articles} } ) {
-            my $isRead = $self->isInHistories($_->{link});
+    @list = grep { scalar @{ $_->{articles} } > 0 } @list;
 
-            if (!$isRead) { $showSection += 1;}
-        }
+    if ( $self->{withHtml} ) {
+        my $tt   = Template->new;
+        my %vars = ( websites => \@list );
 
-        if ($showSection >= 1) {
-            if ($self->{withMarkdown} && defined $_->{url}) {
+        return $tt->process( 'templates/index.tt', \%vars ) or die $tt->error;
+    } else {
+        my $output = '';
+
+        foreach (@list) {
+            if ( $self->{withMarkdown} && defined $_->{url} ) {
                 $output .= sprintf "[%s](%s)", $_->{name}, $_->{url};
             } else {
                 $output .= $_->{name};
@@ -86,30 +103,28 @@ sub display {
             $output .= "\n";
 
             foreach ( @{ $_->{articles} } ) {
-                my $link   = $_->{link};
-                my $text   = $_->{text};
-                my $isRead = $self->isInHistories($link);
+                my $link = $_->{link};
+                my $text = $_->{text};
 
                 $text =~ s/^\s+|\s+$//g;
 
-                if ( !$isRead ) {
-                    my $cutText = sprintf "%.*s", $wchar - 10, $text;
+                my $cutText = sprintf "%.*s", $wchar - 10, $text;
 
-                    if ($self->{withMarkdown}) {
-                        $output .= sprintf(" - [%s](%s)", $cutText, $_->{link});
-                    } else {
-                        $output .= $cutText;
-                    }
-
-                    $output .= "\n";
+                if ( $self->{withMarkdown} ) {
+                    $output .= sprintf( " - [%s](%s)", $cutText, $_->{link} );
+                } else {
+                    $output .= $cutText;
                 }
+
+                $output .= "\n";
             }
 
             $output .= "\n";
         }
+
+        return $output;
     }
 
-    return $output;
 }
 
 1;

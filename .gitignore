@@ -2,3 +2,7 @@ scrap.json
 local
 fancazzista-bin
 run.bash
+.vstags
+dist
+.cache
+web/index.html
