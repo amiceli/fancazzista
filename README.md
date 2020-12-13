@@ -26,6 +26,16 @@ It's better with less :
 
     carton exec -- perl index.pl --config=scrap.json | less
 
+Or with markdown : 
+
+    carton exec -- perl index.pl --config=scrap.json --markodw > index.md
+
+Or with HTML : 
+
+    carton exec -- perl index.pl --config=scrap.json --html > index.html
+
+I use halfmoon css framework, dark mode is currently enabled by default.
+
 To build project : 
 
     sh scripts/build.sh
@@ -78,3 +88,7 @@ I created a CRON every morning, using fancazzista to generate a markdown file.
 I tranform [markdown to HTML](https://github.com/mixu/markdown-styles) and serve it with nginx.
 
 Fresh news every day !!
+
+** UPDATE **
+
+Nox I use html option and serve index.html file.
