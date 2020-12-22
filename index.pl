@@ -4,20 +4,18 @@ use utf8;
 use strict;
 use warnings;
 use lib './lib/';
-use Scrapper;
-use RedditScrapper;
+use Fancazzista::Scrap;
 use ConfigParser;
 use Getopt::Long;
 use Printer;
 
 my $configFilePath;
 my $markDownOutput = 0;
-my $htmlOutput = 0;
+my $htmlOutput     = 0;
 
 GetOptions(
-    'config=s' => \$configFilePath, 
-    'markdown' => \$markDownOutput, 
-    'html' => \$htmlOutput, 
+    'config=s' => \$configFilePath,
+    'markdown' => \$markDownOutput,
 );
 
 if ( not defined $configFilePath ) {
@@ -27,28 +25,17 @@ if ( not defined $configFilePath ) {
 my $configParser = new ConfigParser($configFilePath);
 my $config       = $configParser->readConfig();
 my @histories    = $configParser->readHistory();
+my @list         = Fancazzista::Scrap::scrapContent($config);
 
-my $scrapper       = new Scrapper();
-my $redditScrapper = new RedditScrapper();
+my $printer = new Printer( \@list, \@histories );
 
-my @websites = $scrapper->scrap($config);
-my @reddits  = $redditScrapper->scrap($config);
-
-my $printer = new Printer( \@websites, \@reddits, \@histories );
-
-my $output = $printer->withMarkdown($markDownOutput)->withHtml($htmlOutput)->display();
+my $output = $printer->withMarkdown($markDownOutput)->display();
 
 print $output;
 
 my @articles = ();
 
-for my $item (@websites) {
-    my @map = map { $_->{link} } @{ $item->{articles} };
-
-    push @articles, @map;
-}
-
-for my $item (@reddits) {
+for my $item (@list) {
     my @map = map { $_->{link} } @{ $item->{articles} };
 
     push @articles, @map;

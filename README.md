@@ -89,6 +89,13 @@ I tranform [markdown to HTML](https://github.com/mixu/markdown-styles) and serve
 
 Fresh news every day !!
 
-** UPDATE **
+## Fancazzista::Scrap
 
-Nox I use html option and serve index.html file.
+For scrap website and reddit posts I use a module I made [Fancazzista::Scrap](https://github.com/amiceli/Fancazzista-Scrap). Currently it isn't publish on CPAN, I waiting my account.
+
+But you install it, see instructions in [Fancazzista::Scrap](https://github.com/amiceli/Fancazzista-Scrap) README.
+
+## TODO
+
+- [ ] Add unit tests.
+- [ ] Add Fancazzista::Scrap in cpanfile when it will be published.

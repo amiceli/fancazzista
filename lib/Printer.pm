@@ -12,8 +12,7 @@ sub new {
 
     my $self = {
         websites     => $_[0],
-        reddits      => $_[1],
-        histories    => $_[2],
+        histories    => $_[1],
         withMarkdown => 0,
         withHtml     => 0,
     };
@@ -69,11 +68,8 @@ sub display {
     my ($self)  = @_;
     my ($wchar) = GetTerminalSize();
 
-    my @websites  = @{ $self->{websites} };
-    my @reddits   = @{ $self->{reddits} };
+    my @list      = @{ $self->{websites} };
     my @histories = @{ $self->{histories} };
-
-    my @list = ( @websites, @reddits );
 
     for my $website (@list) {
         my @articles = @{ $website->{articles} };
